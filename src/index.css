@@ -4,6 +4,19 @@ body {
   font-family: sans-serif;
   height: 100%;
 }
+.sunimage{
+  max-height: 180px;
+  min-width: 300px;
+}
+
+.red{
+  color: red;
+}
+
+.imagediv{
+  margin-left: 30px;
+  margin-top: 5px;
+}
 
 html {
   height: 100%;

@@ -31,15 +31,34 @@ class SiteImage extends Component{
 
   state = {
     widt:500,
+    start: false,
     open: false,
     currentzone: 0,
     currentrow:"",
     open1: false,
-    cordssite: [[94,181,105,222,188,252,208,138],[217,133,196,258,377,118,350,72],[353,72,438,22,462,40,383,114]],
     anchorEl: null,
+    cordssite: [],
+    siteUrl: "",
   };
   
   wids = [];
+
+  componentDidMount(){
+    var htp = new XMLHttpRequest();
+    var url = 'http://2609a159-4f2d-4403-9fb1-7d284a187567.mock.pstmn.io/trackerMetrics/graphics';
+    htp.open('GET', url, true);
+    htp.setRequestHeader('Content-type', 'application/json');//Send the proper header information along with the request
+    htp.send();
+    var func = this;
+    htp.onreadystatechange = function() {//Call a function when the state changes.
+        if(htp.readyState === 4 && htp.status === 200) {
+                var jso = JSON.parse(htp.responseText);
+                func.setState({cordssite: jso.coOrdinates});
+                func.setState({siteUrl: jso.siteUrl});
+                func.setState({start: true});
+        }
+    }
+  }
 
   handleOpen = () => {
     this.setState({ open: true });
@@ -59,6 +78,7 @@ clicked=(area)=>{
   this.handleOpen();
 }
 
+
 render(){
     const { anchorEl } = this.state;
     const open = Boolean(anchorEl);
@@ -70,19 +90,19 @@ render(){
     var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
     var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
         this.widw = Math.floor(parseFloat(0.6 * w));
-        this.widh = Math.floor(parseFloat(0.76 * h));
+        this.widh = 380;
         var widarray=[];
         this.wids=[];
         for(var i=0; i<this.state.cordssite.length; i++){
             widarray=[];
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][0]*(this.widw/533))));
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][1]*(this.widh/329))));
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][2]*(this.widw/533))));
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][3]*(this.widh/329))));
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][4]*(this.widw/533))));
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][5]*(this.widh/329))));
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][6]*(this.widw/533))));
-            widarray.push(Math.floor(parseFloat(this.state.cordssite[i][7]*(this.widh/329))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[0].x1*(this.widw/533))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[1].y1*(this.widh/329))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[2].x2*(this.widw/533))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[3].y2*(this.widh/329))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[4].x3*(this.widw/533))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[5].y3*(this.widh/329))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[6].x4*(this.widw/533))));
+            widarray.push(Math.floor(parseFloat(this.state.cordssite[i].cord[7].y4*(this.widh/329))));
             this.wids.push(widarray);
         }
         var area=[];
@@ -98,26 +118,31 @@ render(){
       areas: area
     }
 
-		return(<div>  			
-
-				<div > 
-					<ImageMapper className="imagediv" src={require('./sun.png')} map={MAP} width={this.widw} height={this.widh}
-						onClick={area => this.clicked(area)}
-					/>
+		return(
+    <div ref={this.refCallback}>  			
+        { this.state.start === true &&
+          <div>
+            <div > 
+              <ImageMapper className="imagediv" src={require('./sun.png')} map={MAP} width={this.widw} height={this.widh}
+                onClick={area => this.clicked(area)}
+              />
+            </div>
+            
+            <Modal
+              aria-labelledby="simple-modal-title"
+              aria-describedby="simple-modal-description"
+              open={this.state.open}
+              onClose={this.handleClose}
+              >
+              <div style={getModalStyle()} className={classes.paper}>
+                  <ModalData zone={this.state.currentzone} />
+              </div>
+            
+            </Modal>
+          
           </div>
-          <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={this.state.open}
-          onClose={this.handleClose}
-          >
-          <div style={getModalStyle()} className={classes.paper}>
-              <ModalData zone={this.state.currentzone} />
-          </div>
-        
-      </Modal>
-
-</div>
+        }
+    </div>
 );
 }
 }

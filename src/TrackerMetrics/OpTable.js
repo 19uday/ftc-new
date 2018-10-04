@@ -7,6 +7,8 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import { connect } from 'react-redux';
+import { opTableActions } from '../_actions';
 
 const CustomTableCell = withStyles(theme => ({
   head: {
@@ -45,27 +47,13 @@ class OpTable extends Component {
     };
 
     componentDidMount(){
-        var htp = new XMLHttpRequest();
-        var url = 'http://2609a159-4f2d-4403-9fb1-7d284a187567.mock.pstmn.io/trackerMetrics/operational';
-        htp.open('GET', url, true);
-        htp.setRequestHeader('Content-type', 'application/json');//Send the proper header information along with the request
-        htp.send();
-        var func = this;
-        htp.onreadystatechange = function() {//Call a function when the state changes.
-            if(htp.readyState === 4 && htp.status === 200) {
-                    var jso = JSON.parse(htp.responseText);
-                    func.setState({oparray: jso.operational});
-                    func.setState({open: true});
-            }
-    
-        }
+        this.props.getopTable()
     }
     
     render(){
         const {classes} = this.props;
-        
-        return (<div>
-            {this.state.open === true &&
+
+          return (!this.props.loaded1 ? "Loading" :
           <Paper className={classes.root}>
             <Table className={classes.table}>
               <TableHead>
@@ -76,7 +64,7 @@ class OpTable extends Component {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {this.state.oparray.map(op => {
+                {this.props.opTable.operational.map(op => {
                   return (
                     <TableRow className={classes.row} key={op.zoneId}>
                       <CustomTableCell>
@@ -89,8 +77,7 @@ class OpTable extends Component {
                 })}
               </TableBody>
             </Table>
-          </Paper>}
-          </div>
+          </Paper>
         );
     }
 
@@ -100,4 +87,18 @@ OpTable.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(OpTable);
+function mapStateToProps(state) {
+  const { loaded1, opTable } = state.opTable;
+  return {
+      opTable,
+      loaded1
+  };
+}
+
+const mapDispatchToProps = (dispatch) => ({
+  getopTable: () => {
+      dispatch(opTableActions.getopTable())
+  }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(OpTable));

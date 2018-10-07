@@ -1,1 +1,1 @@
-export * from './TrackerMetrics';
+export * from './TrackerMetrics.jsx';

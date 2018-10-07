@@ -37,10 +37,6 @@ const Nav = (props) => {
         <div className={classes.main}>
             {children}
         </div>
-        <Divider />
-        <div className={classes.messageConsole}>
-          <MessageConsole />
-        </div>
     </div>
   );
 }

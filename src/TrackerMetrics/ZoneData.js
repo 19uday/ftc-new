@@ -33,17 +33,15 @@ const styles = theme => ({
 function CustomizedTable(props) {
   const { classes } = props;
   const data = {
-    "zoneID" : (props.zone + 1),
+    "zoneID" : props.zone,
     "current" :12,
     "status" :"off/forward/reverse"
  }
 
   return (
-    <div className="pad">
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
+    <div className="pad" style={{paddingLeft: '5%'}}>
         <TableBody>
-          {
+          { 
               Object.keys(data).map(key => (
                 <TableRow>
                     <CustomTableCell>{key}</CustomTableCell>
@@ -52,8 +50,6 @@ function CustomizedTable(props) {
             ))
           }
         </TableBody>
-      </Table>
-    </Paper>
     </div>
   );
 }

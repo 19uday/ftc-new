@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import ModalData from './ModalData';
 import { siteImageActions } from '../_actions';
+import { trackerActions } from '../_actions';
 
 function getModalStyle(){
   const top = 20;
@@ -41,12 +42,20 @@ class SiteImage extends Component{
     anchorEl: null,
     cordssite: [],
     siteUrl: "",
+
   };
   
   wids = [];
 
   componentDidMount(){
     this.props.getsiteImage();
+    const rect = this.contentDiv.getBoundingClientRect();
+    console.log(rect.width);
+    console.log(rect.height);
+    this.state.getDim = {
+        width: rect.width,
+        height: rect.height,
+    }
   }
 
   componentWillReceiveProps(nextProps){
@@ -54,9 +63,10 @@ class SiteImage extends Component{
                     console.log(nextProps.siteImage.coOrdinates);
                     var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
                     var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-                    this.widw = Math.floor(parseFloat(0.6 * w));
-                    this.widh = 380;
                     this.wids=[];
+                    console.log(this.state.getDim.width);
+                    this.widw = this.state.getDim.width;
+                    this.widh = this.state.getDim.height;
                     for(var i=0; i<nextProps.siteImage.coOrdinates.length; i++){
                             var widarray=[];
                             widarray.push(Math.floor(parseFloat(nextProps.siteImage.coOrdinates[i].cord[0].x1*(this.widw/533))));
@@ -103,8 +113,7 @@ class SiteImage extends Component{
 
 clicked=(area)=>{
   console.log("clicked" + area._id);
-  this.setState({currentzone: area._id});
-  this.handleOpen();
+  this.props.setzone("Zone" + (area._id + 1));
 }
 
 
@@ -115,11 +124,17 @@ render(){
     const { classes } = this.props;
 			
     return(
-      <div ref={this.refCallback}>  			
+      <div
+      style={{ width: "90%", height: "750%", paddingLeft: '15px'}}
+      ref={ref => {
+          this.contentDiv = ref;
+      }}
+      
+  >  			
           { this.state.start === true &&
             <div>
               <div > 
-                <ImageMapper className="imagediv" src={require('./sun.png')} map={this.MAP} width={this.widw} height={this.widh}
+                <ImageMapper className="imagediv" src={require('./sun.png')} active = {true} fillColor='rgba(0, 255, 0, 0.5)' map={this.MAP} width={this.widw} height={this.widh}
                   onClick={area => this.clicked(area)}
                 />
               </div>
@@ -159,7 +174,12 @@ function mapStateToProps(state) {
 const mapDispatchToProps = (dispatch) => ({
   getsiteImage: () => {
       dispatch(siteImageActions.getsiteImage())
+  },
+
+  setzone: (zone) => {
+    dispatch(trackerActions.setzone(zone));
   }
+
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(SiteImage));

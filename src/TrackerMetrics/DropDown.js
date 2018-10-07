@@ -5,7 +5,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { tracker } from '../_actions';
+import { trackerActions } from '../_actions';
 import {connect} from 'react-redux';
 
 const styles = theme => ({
@@ -31,9 +31,8 @@ class DropDown extends React.Component {
 
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
-    this.props.setr(event.target.value);
-    var op = this.props.option;
-    this.props.dispatch(tracker.setrow(op));
+    var op = this.state.row;
+    this.props.setrow(op);
   };
 
   render() {
@@ -55,7 +54,7 @@ class DropDown extends React.Component {
               <em>None</em>
             </MenuItem>
             {this.state.rows.map(option => (
-            <MenuItem value={option}>{option}</MenuItem>
+            <MenuItem value={option} key={option}>{option}</MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -68,4 +67,10 @@ DropDown.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default connect()(withStyles(styles)(DropDown));
+const mapDispatchToProps = (dispatch) => ({
+  setrow: (row) => {
+      dispatch(trackerActions.setzrow(row))
+  }
+})
+
+export default connect(mapDispatchToProps)(withStyles(styles)(DropDown));

@@ -20,6 +20,7 @@ const CustomTableCell = withStyles(theme => ({
 const styles = theme => ({
   root: {
     overflowX: 'auto',
+    padding: '10px',
   },
 
   row: {
@@ -35,30 +36,23 @@ function CustomizedTable(props) {
     "rowID": props.row,
     "siteName":"Chennai Pilot",
    "siteID":"site0001",
-   "zoneID": (props.zone + 1),
-   "firmwareVersion":"v1.0",
-   "boardSerialNo":"234",
-   "threshold_wind_speed":20.2,
-   "table_length":10.2,
-   "table_width":2.2,
+   "zoneID": props.zone,
 }
 
-  return (
-    <Paper className={classes.root}>
-      <Table className={classes.table}>
-        <TableBody>
-          {
-              Object.keys(data).map(key => (
-                <TableRow>
-                    <CustomTableCell>{key}</CustomTableCell>
-                    <CustomTableCell>{data[key]}</CustomTableCell>
-                </TableRow>
-            ))
-          }
-        </TableBody>
-      </Table>
-    </Paper>
-  );
+return (
+  <div className="pad" style={{paddingLeft: '15%'}}>
+      <TableBody>
+        { 
+            Object.keys(data).map(key => (
+              <TableRow>
+                  <CustomTableCell>{key}</CustomTableCell>
+                  <CustomTableCell>{data[key]}</CustomTableCell>
+              </TableRow>
+          ))
+        }
+      </TableBody>
+  </div>
+);
 }
 
 CustomizedTable.propTypes = {
